@@ -1,3 +1,11 @@
+# Nautilus Visualization Showing Scholarly Influence -- Demo
+
+Jason Portenoy
+
+2020-09-18 The visualization works, but it is not updated for React, etc.
+
+<hr />
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
