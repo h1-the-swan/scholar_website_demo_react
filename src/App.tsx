@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Helmet from 'react-helmet';
 import logo from './logo.svg';
-import { Button } from 'antd';
+import { PageHeader } from 'antd';
 import './App.css';
+
 
 //@ts-ignore
 const $ = window.$;
@@ -18,25 +19,25 @@ const lineChartByYear = nautilus_vis.lineChartByYear;
 function main(graph) {
 
 
-  // Get the most common Domain IDs for the ego author's papers
-  //@ts-ignore
-  var domainsNest = d3.nest()
-  //@ts-ignore
-		.key(function(d) { return d.DomainID; }).sortValues(d3.descending)
-  //@ts-ignore
-		.rollup(function(leaves) { return leaves.length; })
+	// Get the most common Domain IDs for the ego author's papers
+	//@ts-ignore
+	var domainsNest = d3.nest()
+		//@ts-ignore
+		.key(function (d) { return d.DomainID; }).sortValues(d3.descending)
+		//@ts-ignore
+		.rollup(function (leaves) { return leaves.length; })
 		.entries(graph.nodes[0].papers);
-  //@ts-ignore
-	domainsNest.sort(function(a,b) { return d3.descending(a.values, b.values); });
+	//@ts-ignore
+	domainsNest.sort(function (a, b) { return d3.descending(a.values, b.values); });
 	// store as a node property
 	graph.nodes[0].DomainCounts = domainsNest;
 	console.log(graph);
 	// d3.select('#infoDiv').append('p').text(graph.nodes[0].AuthorName);
 
-	var default_options = citationVis.default_options, 
+	var default_options = citationVis.default_options,
 		summaryStatistics = citationVis.summaryStatistics,
 		egoGraphData = citationVis.egoGraphData,
-	    lineChartData = citationVis.lineChartData,
+		lineChartData = citationVis.lineChartData,
 		eventListeners = citationVis.eventListeners;
 
 	var options = default_options.defaults;
@@ -61,12 +62,12 @@ function main(graph) {
 	options.transitionTimePerYear = citationVis.getTransitionTimePerYear(graph);
 
 	citationVis.egoGraphVis.importDefaultOptions(options);
-	for (var i=0; i<citationVis.lineCharts.length; i++) {
+	for (var i = 0; i < citationVis.lineCharts.length; i++) {
 		citationVis.lineCharts[i].importDefaultOptions(options);
 	}
 
 	citationVis.egoGraphVis.init();
-	for (var i=0; i<citationVis.lineCharts.length; i++) {
+	for (var i = 0; i < citationVis.lineCharts.length; i++) {
 		citationVis.lineCharts[i].init();
 	}
 	$.event.trigger({
@@ -81,9 +82,9 @@ function main(graph) {
 	citationVis.lineCharts[2].addTitle("Sum of eigenfactor for this " + ctrtype + "'s publications by year");
 
 
-	$( document ).on( "yearChange", function() {
+	$(document).on("yearChange", function () {
 		var currYear = citationVis.egoGraphVis.currYear;
-		for (var i=0; i<citationVis.lineCharts.length; i++) {
+		for (var i = 0; i < citationVis.lineCharts.length; i++) {
 			citationVis.lineCharts[i].moveYearIndicator(currYear);
 		}
 	});
@@ -107,39 +108,46 @@ function main(graph) {
 	// Event listeners
 	// Event listeners that act across different visualization objects go here
 	citationVis.yearTickClickEventListener();
-	
+
 	d3.select("#nautilus-loading").remove();
 	$('main').removeClass('citationVis-loading');
-	
+
 }
 
 class App extends Component {
-  componentDidMount() {
+	componentDidMount() {
 
-    //@ts-ignore
-d3.json('./eric_fulldata_with_fos_names_2.json', function(error, graph) {
-	if (error) {
-		throw error;
+		//@ts-ignore
+		d3.json('./data/data_horvitz.json', function (error, graph) {
+			if (error) {
+				throw error;
+			}
+			// main(graph);
+			main(graph);
+		});
 	}
-	// main(graph);
-	main(graph);
-});
-  }
 
-  render() {
-    return (
-      <div className="App">
-        <Helmet title="Visualizing Scholarly Influence" />
-        <div className="main">
-          <div id="mainDiv" className="mainDiv">
-	
-	<div id="graphDiv"></div>
-	<div id="chartsDiv"></div>
-</div>
-        </div>
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div className="App">
+				<Helmet title="Visualizing Scholarly Influence" />
+				<div className="main">
+					<PageHeader
+						title="Welcome to scholar.eigenfactor.org"
+					>
+					<h1>Nautilus Visualization Demo</h1>
+					<p className="intro-text">The scholar visualization tool shows the influence a central collection of publications has had across different fields, telling the story of how this influence has developed over time. The collection of interest (representing, for example, an author, or an emerging field) is shown as the central node in a network, and other papers that have cited papers in this collection are shown as circular nodes surrounding the central one. The animation progresses forward in time; as new papers appear, they send out links representing citations, both to the central node and to other nodes that appear in this network. </p>
+					</PageHeader>
+					<h1></h1>
+					<div id="mainDiv" className="mainDiv">
+
+						<div id="graphDiv"></div>
+						<div id="chartsDiv"></div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default App;

@@ -5,6 +5,7 @@
 }
 
 .main {
+  font-family: baskerville;
   background-color: white;
   min-height: 100vh;
   display: flex;
@@ -17,4 +18,20 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.tick text {
+    font-size: .6rem;
+}
+
+.yearTick text {
+  font-size: .85rem;
+}
+
+#authorImageDiv p {
+  font-size: 1.2rem;
+}
+
+.intro-text {
+  max-width: 800px;
 }
