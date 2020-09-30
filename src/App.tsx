@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { RouteComponentProps, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import logo from './logo.svg';
 import { PageHeader } from 'antd';
 import './App.css';
+import queryString from 'querystring';
 
 
 //@ts-ignore
@@ -15,8 +17,11 @@ const citationVis = nautilus_vis.citationVis;
 const egoGraphVis = nautilus_vis.egoGraphVis;
 const lineChartByYear = nautilus_vis.lineChartByYear;
 
+// interface Props extends RouteComponentProps {
+// }
+
 //@ts-ignore
-function main(graph) {
+export function drawVis(graph) {
 
 
 	// Get the most common Domain IDs for the ego author's papers
@@ -114,20 +119,24 @@ function main(graph) {
 
 }
 
-class App extends Component {
-	componentDidMount() {
+const App: React.FC = () => {
+		let qs = useLocation().search.slice(1);
+		// const params = queryString.parse(this.props.location.search.slice(1));
+		let params = queryString.parse(qs);
+		let fn = params.fn;
+		if (typeof fn === 'undefined') {
+			fn = '/data/nas2_mag_doi_join_network_fulldata_with_fos_names.json'
+		}
 
 		//@ts-ignore
-		d3.json('./data/data_horvitz.json', function (error, graph) {
+		d3.json(fn, function (error, graph) {
 			if (error) {
 				throw error;
 			}
 			// main(graph);
-			main(graph);
+			drawVis(graph);
 		});
-	}
 
-	render() {
 		return (
 			<div className="App">
 				<Helmet title="Visualizing Scholarly Influence" />
@@ -147,7 +156,49 @@ class App extends Component {
 				</div>
 			</div>
 		);
-	}
 }
+
+// class App extends Component {
+
+// 	componentDidMount() {
+// 		const qs = useLocation().search;
+// 		// const params = queryString.parse(this.props.location.search.slice(1));
+// 		const params = queryString.parse(qs);
+// 		let fn = params.fn;
+// 		console.log(qs);
+// 		console.log(params);
+
+// 		//@ts-ignore
+// 		d3.json('./data/data_horvitz.json', function (error, graph) {
+// 			if (error) {
+// 				throw error;
+// 			}
+// 			// main(graph);
+// 			main(graph);
+// 		});
+// 	}
+
+// 	render() {
+// 		return (
+// 			<div className="App">
+// 				<Helmet title="Visualizing Scholarly Influence" />
+// 				<div className="main">
+// 					<PageHeader
+// 						title="Welcome to scholar.eigenfactor.org"
+// 					>
+// 					<h1>Nautilus Visualization Demo</h1>
+// 					<p className="intro-text">The scholar visualization tool shows the influence a central collection of publications has had across different fields, telling the story of how this influence has developed over time. The collection of interest (representing, for example, an author, or an emerging field) is shown as the central node in a network, and other papers that have cited papers in this collection are shown as circular nodes surrounding the central one. The animation progresses forward in time; as new papers appear, they send out links representing citations, both to the central node and to other nodes that appear in this network. </p>
+// 					</PageHeader>
+// 					<h1></h1>
+// 					<div id="mainDiv" className="mainDiv">
+
+// 						<div id="graphDiv"></div>
+// 						<div id="chartsDiv"></div>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		);
+// 	}
+// }
 
 export default App;
